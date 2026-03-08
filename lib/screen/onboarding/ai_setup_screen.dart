@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../home_screen.dart';
-
+import '../../services/storage_service.dart';
+import '../../data/user_data.dart';
 class AiSetupScreen extends StatefulWidget {
   const AiSetupScreen({super.key});
 
@@ -39,7 +40,7 @@ class _AiSetupScreenState extends State<AiSetupScreen>
 
     await Future.delayed(const Duration(milliseconds: 600));
     if (!mounted) return;
-
+    await StorageService.saveUserData(userData);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const HomeScreen()),
