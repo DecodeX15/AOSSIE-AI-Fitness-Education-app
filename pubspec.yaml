@@ -62,6 +62,10 @@ flutter:
   - assets/model.onnx
   - assets/tag_embeddings.json
   - assets/exercise_db.json
+  - assets/vocab.txt
+  - assets/tokenizer.json
+  - assets/tokenizer_config.json
+  - assets/special_tokens_map.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

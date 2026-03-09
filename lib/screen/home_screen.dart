@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../services/onnx_service.dart';
-
+import '../services/tags_generations.dart';
+import '../services/tokenizer_service.dart';
+import '../services/allembeddings.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -22,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> loadModel() async {
     print("Step 1: Creating ONNX service");
-
     onnx = OnnxService();
 
     print("Step 2: Starting model initialization");
@@ -31,10 +32,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
     print("Step 3: Model loaded successfully");
 
+    final tokenizer = TokenizerService();
+    await tokenizer.init();
+    final store = EmbeddingStore();
+    await store.init();
+    final tagGen = TagsGenerations(onnx, tokenizer, store);
+    final tags = await tagGen.getBestTags(
+      "i was suffering from knee joint issue so please make that",
+    );
+    print("Generated tags: $tags");
+
     setState(() {
       modelLoaded = true;
     });
-
     print("Step 4: UI state updated, modelLoaded = true");
   }
 
