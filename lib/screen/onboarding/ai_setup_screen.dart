@@ -8,6 +8,7 @@ import '../../services/onnx_service.dart';
 import '../../services/tokenizer_service.dart';
 import '../../services/allembeddings.dart';
 import '../../services/tags_generations.dart';
+import 'package:lottie/lottie.dart';
 
 class AiSetupScreen extends StatefulWidget {
   const AiSetupScreen({super.key});
@@ -66,7 +67,10 @@ class _AiSetupScreenState extends State<AiSetupScreen>
       final goalTags = tags.take(3).toList();
       List<String> goals = List<String>.from(userData["goals"] ?? []);
       goals.addAll(goalTags);
-      goals = goals.map((e) => e.toLowerCase().replaceAll(" ", "_")).toSet().toList();
+      goals = goals
+          .map((e) => e.toLowerCase().replaceAll(" ", "_"))
+          .toSet()
+          .toList();
       userData["goals"] = goals;
       print("Updated Goals: ${userData["goals"]}");
     }
@@ -79,7 +83,10 @@ class _AiSetupScreenState extends State<AiSetupScreen>
       final injuryTags = tags.sublist(3, 6);
       List<String> injuries = List<String>.from(userData["injuries"] ?? []);
       injuries.addAll(injuryTags);
-      injuries = injuries.map((e) => e.toLowerCase().replaceAll(" ", "_")).toSet().toList();
+      injuries = injuries
+          .map((e) => e.toLowerCase().replaceAll(" ", "_"))
+          .toSet()
+          .toList();
       userData["injuries"] = injuries;
       print("Updated Injuries: ${userData["injuries"]}");
     }
@@ -92,7 +99,10 @@ class _AiSetupScreenState extends State<AiSetupScreen>
       final motivationTags = tags.sublist(6, 9);
       List<String> motivation = List<String>.from(userData["motivation"] ?? []);
       motivation.addAll(motivationTags);
-      motivation = motivation.map((e) => e.toLowerCase().replaceAll(" ", "_")).toSet().toList();
+      motivation = motivation
+          .map((e) => e.toLowerCase().replaceAll(" ", "_"))
+          .toSet()
+          .toList();
       userData["motivation"] = motivation;
       print("Updated Motivation: ${userData["motivation"]}");
     }
@@ -127,7 +137,6 @@ class _AiSetupScreenState extends State<AiSetupScreen>
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -139,12 +148,12 @@ class _AiSetupScreenState extends State<AiSetupScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FadeTransition(
-                opacity: _pulseCtrl.drive(Tween(begin: 0.4, end: 1.0)),
-                child: const Icon(
-                  Icons.auto_awesome_rounded,
-                  color: AppColors.primary,
-                  size: 56,
+              SizedBox(
+                height: 220,
+                width: 220,
+                child: Lottie.asset(
+                  'assets/animations/blue_loading.json',
+                  repeat: true,
                 ),
               ),
 

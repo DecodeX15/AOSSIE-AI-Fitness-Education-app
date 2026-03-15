@@ -3,6 +3,8 @@ import '../theme/app_theme.dart';
 import '../services/onnx_service.dart';
 import '../exercise_filter/main_exercise.dart';
 import './main_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -12,6 +14,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late OnnxService onnx;
+  bool isPreparingSession = false;
   bool modelLoaded = false;
   List<Map<String, dynamic>> sessionExercises = [];
 
@@ -69,11 +72,108 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SizedBox(height: 16),
 
-            ...sessionExercises
-                .map((exercise) => _exerciseCard(textTheme, exercise))
-                .toList(),
+            _buildSessionCard(textTheme),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildSessionCard(TextTheme textTheme) {
+    if (isPreparingSession) {
+      return Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.divider),
+        ),
+        child: Column(
+          children: [
+            const CircularProgressIndicator(color: AppColors.primary),
+            const SizedBox(height: 16),
+            Text(
+              "Preparing your next session...",
+              style: textTheme.titleMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.divider),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.fitness_center, size: 24),
+              const SizedBox(width: 8),
+              Text("Today's Session", style: textTheme.titleMedium),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+          ...sessionExercises.map((exercise) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                children: [
+                  const Icon(Icons.circle, size: 8, color: AppColors.primary),
+                  const SizedBox(width: 10),
+
+                  Expanded(
+                    child: Text(exercise["name"], style: textTheme.bodyMedium),
+                  ),
+
+                  Text(
+                    exercise["estimated_duration"],
+                    style: textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            );
+          }),
+
+          const SizedBox(height: 20),
+
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        MainexerciseScreen(exercises: sessionExercises),
+                  ),
+                ).then((_) async {
+                  final prefs = await SharedPreferences.getInstance();
+                  final hasLastSession =
+                      prefs.getStringList("last_7_days_exercises") != null;
+                  if (hasLastSession) {
+                    setState(() => isPreparingSession = true);
+                    await Future.delayed(const Duration(seconds: 10));
+                    final newExercises =
+                        await MainExercise.getSessionExercises();
+                    setState(() {
+                      sessionExercises = newExercises;
+                      isPreparingSession = false;
+                    });
+                  }
+                });
+              },
+              child: const Text("Start Session"),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -112,54 +212,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         );
       }),
-    );
-  }
-
-  Widget _exerciseCard(TextTheme textTheme, Map<String, dynamic> exercise) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(16),
-
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
-      ),
-
-      child: Row(
-        children: [
-          const Icon(Icons.fitness_center, size: 28),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(exercise["name"], style: textTheme.titleMedium),
-                const SizedBox(height: 4),
-                Text(
-                  "${exercise["estimated_duration"]} • ${exercise["body_region"]}",
-                  style: textTheme.bodySmall,
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(
-            width: 90,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MainexerciseScreen(exercises: sessionExercises),
-                  ),
-                );
-              },
-              child: const Text("Start"),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

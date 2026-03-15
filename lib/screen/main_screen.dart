@@ -20,7 +20,7 @@ class _ExerciseScreenState extends State<MainexerciseScreen> {
   int currentIndex = 0;
   int currentInstruction = 0;
   bool isResting = false;
-  bool isPreparing = true; 
+  bool isPreparing = true;
   int timerSeconds = 10;
 
   @override
@@ -88,11 +88,11 @@ class _ExerciseScreenState extends State<MainexerciseScreen> {
     }
     setState(() {
       isResting = true;
-      timerSeconds = 20;
+      timerSeconds = 6;
     });
     await _initVideo(exercise: nextExercise);
     await tts.speak("Good job! Rest. Next up: ${nextExercise!["name"]}");
-    await _countdown(20);
+    await _countdown(6);
     if (!mounted) return;
 
     setState(() {
@@ -101,7 +101,7 @@ class _ExerciseScreenState extends State<MainexerciseScreen> {
       currentInstruction = 0;
     });
     await _initVideo();
-    _startFlow(); 
+    _startFlow();
   }
 
   Future<void> _speakInstructions(int exerciseDuration) async {
@@ -129,7 +129,7 @@ class _ExerciseScreenState extends State<MainexerciseScreen> {
   }
 
   void _showSessionComplete() async {
-    await _saveCompletedExercises();
+    await _savedata();
     tts.speak("Session complete! Great work!");
     showDialog(
       context: context,
@@ -140,27 +140,56 @@ class _ExerciseScreenState extends State<MainexerciseScreen> {
           "Session Complete!",
           style: TextStyle(color: AppColors.textPrimary),
         ),
-        content: const Text(
-          "Great job! You finished all exercises.",
-          style: TextStyle(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text(
-              "Done",
-              style: TextStyle(color: AppColors.primary),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "How was the session?",
+              style: TextStyle(color: AppColors.textSecondary),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _feedbackBtn("Too Hard", "beginner", "low"),
+                _feedbackBtn("Just Right", null, null),
+                _feedbackBtn("Too Easy", "advanced", "high"),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Future<void> _saveCompletedExercises() async {
+  Widget _feedbackBtn(String label, String? difficulty, String? intensity) {
+    return GestureDetector(
+      onTap: () async {
+        if (difficulty != null && intensity != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString("level", difficulty);
+          await prefs.setString("intensity", intensity);
+          print("Updated → difficulty: $difficulty, intensity: $intensity");
+        }
+        Navigator.pop(context);
+        Navigator.pop(context);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.cardSelected,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(color: AppColors.textPrimary, fontSize: 12),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _savedata() async {
     final prefs = await SharedPreferences.getInstance();
     final existing = prefs.getStringList("last_7_days_exercises") ?? [];
     final exerciseSet = Set<String>.from(existing);
@@ -168,6 +197,10 @@ class _ExerciseScreenState extends State<MainexerciseScreen> {
       exerciseSet.add(ex["exercise_id"]);
     }
     await prefs.setStringList("last_7_days_exercises", exerciseSet.toList());
+    await prefs.setInt(
+      "last_session_time",
+      DateTime.now().millisecondsSinceEpoch,
+    );
     print("Saved: $exerciseSet");
   }
 
