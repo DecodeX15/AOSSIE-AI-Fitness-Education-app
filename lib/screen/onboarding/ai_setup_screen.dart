@@ -145,64 +145,66 @@ class _AiSetupScreenState extends State<AiSetupScreen>
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 220,
-                width: 220,
-                child: Lottie.asset(
-                  'assets/animations/blue_loading.json',
-                  repeat: true,
-                ),
-              ),
-
-              const SizedBox(height: 36),
-
-              Text(
-                'Preparing your personal\nworkout plan…',
-                style: textTheme.headlineMedium,
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: 32),
-
-              ...List.generate(_steps.length, (i) {
-                final step = _steps[i];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: Row(
-                    children: [
-                      Icon(
-                        step.done
-                            ? Icons.check_circle_rounded
-                            : Icons.radio_button_unchecked,
-                        color: step.done
-                            ? AppColors.primary
-                            : AppColors.textSecondary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        step.label,
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: step.done
-                              ? AppColors.textPrimary
-                              : AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 220,
+                  width: 220,
+                  child: Lottie.asset(
+                    'assets/animations/blue_loading.json',
+                    repeat: true,
                   ),
-                );
-              }),
+                ),
 
-              const SizedBox(height: 40),
+                const SizedBox(height: 36),
 
-              const LinearProgressIndicator(
-                backgroundColor: AppColors.card,
-                minHeight: 4,
-              ),
-            ],
+                Text(
+                  'Preparing your personal\nworkout plan…',
+                  style: textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
+                ),
+
+                const SizedBox(height: 32),
+
+                ...List.generate(_steps.length, (i) {
+                  final step = _steps[i];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      children: [
+                        Icon(
+                          step.done
+                              ? Icons.check_circle_rounded
+                              : Icons.radio_button_unchecked,
+                          color: step.done
+                              ? AppColors.primary
+                              : AppColors.textSecondary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          step.label,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: step.done
+                                ? AppColors.textPrimary
+                                : AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+
+                const SizedBox(height: 40),
+
+                const LinearProgressIndicator(
+                  backgroundColor: AppColors.card,
+                  minHeight: 4,
+                ),
+              ],
+            ),
           ),
         ),
       ),

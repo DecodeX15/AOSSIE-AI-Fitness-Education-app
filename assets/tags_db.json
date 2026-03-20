@@ -1,3 +1,4 @@
+// these tags are exactly mapped with my exercise database and are used to filter exercises based on user goals, injuries, and motivations. Each tag corresponds to specific attributes of exercises, allowing for personalized workout recommendations.
 {
   "goals": [
     "mobility",

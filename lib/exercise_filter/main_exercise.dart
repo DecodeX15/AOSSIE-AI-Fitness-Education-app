@@ -20,7 +20,7 @@ class MainExercise {
     );
     final userGoals = List<String>.from(prefs.getStringList("goals") ?? []);
     final userDifficulty = prefs.getString("level") ?? "beginner";
-
+    final userIntensity = prefs.getString("intensity") ?? "moderate";
     print("User injuries: $userInjuries");
     print("User goals: $userGoals");
     print("User difficulty: $userDifficulty");
@@ -34,7 +34,7 @@ class MainExercise {
       safeExercises: safeExercises,
       userGoals: userGoals,
       userDifficulty: userDifficulty,
-      userIntensity: "moderate",
+      userIntensity: userIntensity,
     );
     final lastSessionExercises = Set<String>.from(
       prefs.getStringList("last_7_days_exercises") ?? [],

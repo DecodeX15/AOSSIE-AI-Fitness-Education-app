@@ -65,21 +65,21 @@ class _ExerciseScreenState extends State<MainexerciseScreen> {
     if (isFirst) {
       setState(() {
         isPreparing = true;
-        timerSeconds = 10;
+        timerSeconds = 5;
       });
       await tts.speak("Get ready for ${currentExercise["name"]}");
-      await _countdown(10);
+      await _countdown(5);
       if (!mounted) return;
     }
     setState(() {
       isPreparing = false;
       isResting = false;
-      timerSeconds = 13;
+      timerSeconds = 90;
       currentInstruction = 0;
     });
     await tts.speak("Start!");
-    _speakInstructions(13);
-    await _countdown(13);
+    _speakInstructions(90);
+    await _countdown(90);
     if (!mounted) return;
 
     if (nextExercise == null) {
@@ -88,11 +88,11 @@ class _ExerciseScreenState extends State<MainexerciseScreen> {
     }
     setState(() {
       isResting = true;
-      timerSeconds = 6;
+      timerSeconds = 10;
     });
     await _initVideo(exercise: nextExercise);
     await tts.speak("Good job! Rest. Next up: ${nextExercise!["name"]}");
-    await _countdown(6);
+    await _countdown(10);
     if (!mounted) return;
 
     setState(() {
